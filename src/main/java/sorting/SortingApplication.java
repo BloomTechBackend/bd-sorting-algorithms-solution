@@ -1,31 +1,41 @@
 package sorting;
 
-import java.util.Random;
+import java.util.*;
 
 public class SortingApplication {
     public static void main(String[] args) {
 
-        SortingAlgorithm[] algorithms = {
-                new BubbleSort(),
+        SortingAlgorithm[] algorithms = { // in alphabetical order
+//                new BubbleSort(),
                 new InsertionSort(),
                 new MergeSort(),
                 new QuickSort(),
                 new SelectionSort()
         };
+        Map<SortingAlgorithm, List<Long>> executionTimes = new HashMap<>();
+        for (SortingAlgorithm algorithm : algorithms) {
+            executionTimes.put(algorithm, new ArrayList<>());
+        }
 
-        int[] bases = {1000, 5000, 10000, 25000, 50000, 100000};
+        int[] bases = {10000,20000,30000,40000,50000,60000,70000,80000,90000,100000};
         for (int n : bases) {
             int[] unsorted = randomNumbersArray(n);
             System.out.println(String.format("___Starting sorts with n = %d ___ ", n ));
             for (SortingAlgorithm algorithm : algorithms) {
                 int[] copy = unsorted.clone();
-                sortTimer(algorithm, copy);
+                executionTimes.get(algorithm).add(sortTimer(algorithm, copy));
             }
+        }
+
+        System.out.println("\nHere are the runtimes for each algorithm:");
+        for (SortingAlgorithm algorithm : algorithms) {
+            System.out.print(algorithm.getClass() + ": ");
+            System.out.println(executionTimes.get(algorithm));
         }
 
         // After running the algorithms against these data sets,
         // are there some that you would like to test against larger values of n?
-        // Be careful, if n is too large it might take minutes, hours, or years for some algorithms to complete
+        // Be careful! If n is too large it might take minutes, hours, or years for some algorithms to complete
 
     }
 
@@ -38,10 +48,12 @@ public class SortingApplication {
         return numbers;
     }
 
-    static void sortTimer(SortingAlgorithm algorithm, int[] numbers) {
+    static long sortTimer(SortingAlgorithm algorithm, int[] numbers) {
         final long startTime = System.currentTimeMillis();
         algorithm.sort(numbers);
         final long endTime = System.currentTimeMillis();
-        System.out.println(String.format("%s execution time: %d ms", algorithm.getClass(), (endTime - startTime)));
+        final long totalTime = endTime - startTime;
+        System.out.println(String.format("%s execution time: %d ms", algorithm.getClass(), totalTime));
+        return totalTime;
     }
 }
